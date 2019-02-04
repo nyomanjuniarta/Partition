@@ -9,8 +9,11 @@ intent_mark = 'in'
 
 def print_lattice(L, output_file_name):
     with open(output_file_name, 'w') as f:
+        f.write(str(len(L.nodes(data=True))) + ' concepts\n')
         for n in L.nodes(data=True):
-            f.write(str(n) + ' ' + str(L.neighbors(n[0])) + '\n')
+            if len(n[1][extent_mark]) >= 1:
+                #f.write(str(n) + ' ' + str(L.neighbors(n[0])) + '\n')
+                f.write(str(n[1][intent_mark]) + ':' + str(len(n[1][extent_mark])) + ':' + str(n[1][extent_mark]) + '\n')
 
 
 def init_diagram():
@@ -51,7 +54,7 @@ def add_object(object_concept_id, object_id, L, depth=1):
         add_object(j, object_id, L, depth+1)
 
 
-def add_intent(intent, generator, L, tab):
+def add_intent(intent, generator, L, tab, maximality):
     #print print_tab(tab), 'add_intent(', intent, ',', generator, ')'
     generator = get_maximal_concept(intent, generator, L)
     #print print_tab(tab), 'generator', generator
@@ -62,7 +65,7 @@ def add_intent(intent, generator, L, tab):
         if not L.node[candidate_id][intent_mark] <= intent:
             #print print_tab(tab), 'candidate_id', candidate_id
             candidate_intent = L.node[candidate_id][intent_mark].intersect(intent)
-            candidate_id = add_intent(candidate_intent, candidate_id, L, tab + 1)
+            candidate_id = add_intent(candidate_intent, candidate_id, L, tab + 1, maximality)
         add_parent = True
         for parent in new_parents:
             if L.node[candidate_id][intent_mark] <= L.node[parent][intent_mark]:
@@ -79,10 +82,33 @@ def add_intent(intent, generator, L, tab):
         if parent in L[generator]:
             L.remove_edge(generator, parent)
         L.add_edge(new_concept_id, parent)
+        if maximality == 1:
+            check_maximality(new_concept_id, parent, L)
         #print print_tab(tab), parent, 'parent of', new_concept_id
     L.add_edge(generator, new_concept_id)
+    if maximality == 1:
+        check_maximality(generator, new_concept_id, L)
     #print print_tab(tab), new_concept_id, 'parent_of', generator
     return new_concept_id
+
+
+def check_maximality(child, parent, L):  # menghapus partition component yang tidak maksimal, tapi bermasalah (mungkin) buat similarity antar partitions
+    child_intent_partition = set(L.node[child][intent_mark].partition)
+    parent_intent_partition = L.node[parent][intent_mark].partition
+    L.node[child][intent_mark].partition = set()
+    for partition_component_c in child_intent_partition:
+        maximal = True
+        for partition_component_p in parent_intent_partition:
+            if partition_component_c == partition_component_p:
+                maximal = False
+                break
+                #print child, parent, partition_component_c.set_of_items
+                #print 'before', child_intent_partition - partition_component_c
+                #L.node[child][intent_mark].partition = L.node[child][intent_mark].partition.difference(partition_component_c.set_of_items)
+                #print 'after', L.node[child][intent_mark]
+        if maximal:
+            L.node[child][intent_mark].partition.add(partition_component_c)
+    return
 
 
 def print_tab(tab):

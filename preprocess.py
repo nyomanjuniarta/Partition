@@ -9,6 +9,8 @@ if __name__ == "__main__":
         for line in f:
             numbers = line.replace('\n', '').replace('\r', '').split(',')
             for number in numbers:
+                #if int(number) == 999:
+                    #string_out += '999 '
                 if int(number)<0:
                     string_out += '- '
                 else:

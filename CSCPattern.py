@@ -34,7 +34,7 @@ class Item:
         return output
 
 
-class PartitionElement:
+class PartitionElement:  # partition element = partition component
     def __init__(self, items):
         self.set_of_items = frozenset(items)
 
@@ -62,6 +62,9 @@ class PartitionElement:
             output += str(item) + ' '
         return output[:-1]
 
+    def size(self):
+        return len(self.set_of_items)
+
 
 class PatternConfig:
     def __init__(self, theta=1):
@@ -88,6 +91,14 @@ class Pattern:
         for element1 in self.partition:
             for element2 in other.partition:
                 self.common(element1, element2, pi.partition)
+
+        ignore = True
+        for element in pi.partition:
+            if element.size() >= self.cfg.theta:
+                ignore = False
+                break
+        if ignore:
+            pi.partition = set()
         return pi
 
     def common(self, el1, el2, partition):
