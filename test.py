@@ -1,5 +1,6 @@
 import sys
-from CSCPattern import Pattern, PatternConfig, PartitionElement, pattern_parser
+#from CSCPattern import Pattern, PatternConfig, PartitionElement, pattern_parser
+from CRPattern import Pattern, PatternConfig
 from diagram import init_diagram, add_intent, add_object, clean_flags
 
 if __name__ == "__main__":
@@ -29,13 +30,10 @@ if __name__ == "__main__":
     print 'pb', pb
     print 'pa == pb', pa==pb'''
 
-    p6 = Pattern(dirty=False)
-    p6.partition.add(PartitionElement(pattern_parser('- -',1)))
-    p6.partition.add(PartitionElement(pattern_parser('- - +',3)))
-    p6.partition.add(PartitionElement(pattern_parser('- - +',6)))
-    print 'p6', p6
-    p7 = Pattern(dirty=False)
-    p7.partition.add(PartitionElement(pattern_parser('- -',1)))
-    p7.partition.add(PartitionElement(pattern_parser('+ + - - - +',3)))
-    print 'p7', p7
+    p6 = Pattern(instance='1 4 2 2', dirty=True)
+    p7 = Pattern(instance='3 3 2 2', dirty=True)
+    print 'p6 =', p6
+    print 'p7 =', p7
+    print 'p6 n p7 =', p6.intersect(p7)
+    print 'p6 == p7', p6 == p7
     print 'p6 <= p7', p6 <= p7

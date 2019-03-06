@@ -1,6 +1,7 @@
 import sys
 from time import time
-from CSCPattern import Pattern, PatternConfig
+#from CSCPattern import Pattern, PatternConfig
+from CRPattern import Pattern, PatternConfig
 from diagram import init_diagram, add_intent, add_object, clean_flags, print_lattice
 
 if __name__ == "__main__":
@@ -25,7 +26,7 @@ if __name__ == "__main__":
             print 'line', object_id
             raw_entry = line.replace('\n', '').replace('\r', '')
             pattern = Pattern(instance=raw_entry, config=cfg, object=object_id)
-            #print 'partitions', pattern
+            #print 'partition', pattern
             object_concept_id = add_intent(pattern, -1, L, 0, max)
             add_object(object_concept_id, object_id, L)
             clean_flags(L, object_concept_id)
