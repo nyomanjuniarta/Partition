@@ -34,3 +34,4 @@ if __name__ == "__main__":
     print_lattice(L, path + '_t' + str(theta) + '_m' + str(max) + '_lattice.txt')
     end_time = time()
     print(end_time - start_time)
+    
